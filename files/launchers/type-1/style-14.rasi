@@ -11,10 +11,10 @@
 configuration {
 	modi:                       "drun,run,filebrowser,window";
     show-icons:                 true;
-    display-drun:               " Apps";
-    display-run:                " Run";
-    display-filebrowser:        " Files";
-    display-window:             " Windows";
+    display-drun:               "  Apps";
+    display-run:                "  Run";
+    display-filebrowser:        "  Files";
+    display-window:             "  Windows";
 	drun-display-format:        "{name} [<span weight='light' size='small'><i>({generic})</i></span>]";
 	window-format:              "{w} · {c} · {t}";
 }
@@ -137,7 +137,7 @@ textbox-prompt-colon {
     enabled:                     true;
     expand:                      false;
     padding:                     @element-padding;
-    str:                         "";
+    str:                         " ";
     border:                      0px solid;
     border-radius:               @element-radius;
     border-color:                @border-colour;
