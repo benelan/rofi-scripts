@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
+# shellcheck disable=1091
 
 ## Author  : Aditya Shakya (adi1090x)
 ## Github  : @adi1090x
@@ -6,17 +7,19 @@
 ## Applets : Favorite Applications
 
 # Import Current Theme
-source "$HOME"/.config/rofi/applets/shared/theme.bash
+. "$HOME/.config/rofi/applets/shared/theme.bash"
+# shellcheck disable=2154
 theme="$type/$style"
 
 # Theme Elements
 prompt='Applications'
 mesg="Installed Packages : $(apt list --installed 2>/dev/null | wc -l) (apt)"
 
-if [[ ("$theme" == *'type-1'*) || ("$theme" == *'type-3'*) || ("$theme" == *'type-5'*) ]]; then
+type_number="$(basename "$type")"
+if [ "$type_number" = 'type-1' ] || [ "$type_number" = 'type-3' ] || [ "$type_number" = 'type-5' ]; then
     list_col='1'
     list_row='6'
-elif [[ ("$theme" == *'type-2'*) || ("$theme" == *'type-4'*) ]]; then
+elif [ "$type_number" = 'type-2' ] || [ "$type_number" = 'type-4' ]; then
     list_col='6'
     list_row='1'
 fi
@@ -24,24 +27,24 @@ fi
 # CMDs (add your apps here)
 term_cmd="$TERMINAL"
 file_cmd="vifm"
-text_cmd="$EDITOR"
+text_cmd="$TERMINAL -e $([ "$EDITOR" = "nvim" ] && echo "nvim" || echo "vim")"
 web_cmd="$BROWSER"
 music_cmd='lollypop'
 setting_cmd="gnome-control-center"
 
 # Options
 layout="$(cat "${theme}" | grep 'USE_ICON' | cut -d'=' -f2)"
-if [[ "$layout" == 'NO' ]]; then
-    option_1="  Terminal <span weight='light' size='small'><i>($term_cmd)</i></span>"
-    option_2="  Files <span weight='light' size='small'><i>($file_cmd)</i></span>"
-    option_3="󰘙  Editor <span weight='light' size='small'><i>($text_cmd)</i></span>"
+if [ "$layout" = 'NO' ]; then
+    option_1="  Terminal <span weight='light' size='small'><i>($term_cmd)</i></span>"
+    option_2="  Files <span weight='light' size='small'><i>($file_cmd)</i></span>"
+    option_3="  Editor <span weight='light' size='small'><i>($text_cmd)</i></span>"
     option_4="󰖟  Browser <span weight='light' size='small'><i>($web_cmd)</i></span>"
     option_5="󰝚  Music <span weight='light' size='small'><i>($music_cmd)</i></span>"
     option_6="  Settings <span weight='light' size='small'><i>($setting_cmd)</i></span>"
 else
-    option_1=" "
-    option_2=" "
-    option_3="󰘙 "
+    option_1=" "
+    option_2=" "
+    option_3=" "
     option_4="󰖟 "
     option_5="󰝚 "
     option_6=" "
@@ -50,7 +53,7 @@ fi
 # Rofi CMD
 rofi_cmd() {
     rofi -theme-str "listview {columns: $list_col; lines: $list_row;}" \
-        -theme-str 'textbox-prompt-colon {str: " ";}' \
+        -theme-str 'textbox-prompt-colon {str: "󰏋 ";}' \
         -dmenu \
         -p "$prompt" \
         -mesg "$mesg" \

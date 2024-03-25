@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
+# shellcheck disable=1091
 
 ## Author  : Aditya Shakya (adi1090x)
 ## Github  : @adi1090x
@@ -6,24 +7,26 @@
 ## Applets : Power Menu
 
 # Import Current Theme
-source "$HOME"/.config/rofi/applets/shared/theme.bash
+. "$HOME/.config/rofi/applets/shared/theme.bash"
+# shellcheck disable=2154
 theme="$type/$style"
 
 # Theme Elements
 prompt="$(hostname)"
 mesg="Uptime : $(uptime -p | sed -e 's/up //g')"
 
-if [[ ("$theme" == *'type-1'*) || ("$theme" == *'type-3'*) || ("$theme" == *'type-5'*) ]]; then
+type_number="$(basename "$type")"
+if [ "$type_number" = 'type-1' ] || [ "$type_number" = 'type-3' ] || [ "$type_number" = 'type-5' ]; then
     list_col='1'
     list_row='6'
-elif [[ ("$theme" == *'type-2'*) || ("$theme" == *'type-4'*) ]]; then
+elif [ "$type_number" = 'type-2' ] || [ "$type_number" = 'type-4' ]; then
     list_col='6'
     list_row='1'
 fi
 
 # Options
 layout=$(cat "${theme}" | grep 'USE_ICON' | cut -d'=' -f2)
-if [[ "$layout" == 'NO' ]]; then
+if [ "$layout" = 'NO' ]; then
     option_1="󰍁  Lock"
     option_2="󰗽  Logout"
     option_3="  Suspend"
@@ -87,7 +90,7 @@ confirm_exit() {
 # Confirm and execute
 confirm_run() {
     selected="$(confirm_exit)"
-    [[ "$selected" == "$no" ]] && exit
+    [ "$selected" = "$no" ] && exit
     $1 && [ -e "$2" ] && $2
 }
 

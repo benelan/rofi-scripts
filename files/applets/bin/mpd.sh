@@ -6,7 +6,7 @@
 ## Applets : MPD (music)
 
 # Import Current Theme
-source "$HOME"/.config/rofi/applets/shared/theme.bash
+. "$HOME"/.config/rofi/applets/shared/theme.bash
 theme="$type/$style"
 
 # Theme Elements
@@ -28,8 +28,8 @@ elif [[ ("$theme" == *'type-2'*) || ("$theme" == *'type-4'*) ]]; then
 fi
 
 # Options
-layout=$(cat ${theme} | grep 'USE_ICON' | cut -d'=' -f2)
-if [[ "$layout" == 'NO' ]]; then
+layout=$(cat "${theme}" | grep 'USE_ICON' | cut -d'=' -f2)
+if [ "$layout" = 'NO' ]; then
     if [[ ${status} == *"[playing]"* ]]; then
         option_1="󰏤 Pause"
     else
@@ -82,50 +82,28 @@ rofi_cmd() {
         -mesg "$mesg" \
         ${active} ${urgent} \
         -markup-rows \
-        -theme ${theme}
+        -theme "${theme}"
 }
 
 # Pass variables to rofi dmenu
 run_rofi() {
-    echo -e "$option_1\n$option_2\n$option_3\n$option_4\n$option_5\n$option_6" | rofi_cmd
-}
-
-# Execute Command
-run_cmd() {
-    if [[ "$1" == '--opt1' ]]; then
-        mpc -q toggle && notify-send -u low -t 1000 "󰎈 $(mpc current)"
-    elif [[ "$1" == '--opt2' ]]; then
-        mpc -q stop
-    elif [[ "$1" == '--opt3' ]]; then
-        mpc -q prev && notify-send -u low -t 1000 "󰎈 $(mpc current)"
-    elif [[ "$1" == '--opt4' ]]; then
-        mpc -q next && notify-send -u low -t 1000 "󰎈 $(mpc current)"
-    elif [[ "$1" == '--opt5' ]]; then
-        mpc -q repeat
-    elif [[ "$1" == '--opt6' ]]; then
-        mpc -q random
-    fi
+    printf "%s\n%s\n%s\n%s\n%s\n%s" \
+        "$option_1" \
+        "$option_2" \
+        "$option_3" \
+        "$option_4" \
+        "$option_5" \
+        "$option_6" |
+        rofi_cmd
 }
 
 # Actions
 chosen="$(run_rofi)"
 case ${chosen} in
-    $option_1)
-        run_cmd --opt1
-        ;;
-    $option_2)
-        run_cmd --opt2
-        ;;
-    $option_3)
-        run_cmd --opt3
-        ;;
-    $option_4)
-        run_cmd --opt4
-        ;;
-    $option_5)
-        run_cmd --opt5
-        ;;
-    $option_6)
-        run_cmd --opt6
-        ;;
+    "$option_1") mpc -q toggle && notify-send -u low -t 1000 "󰎈 $(mpc current)" ;;
+    "$option_2") mpc -q stop ;;
+    "$option_3") mpc -q prev && notify-send -u low -t 1000 "󰎈 $(mpc current)" ;;
+    "$option_4") mpc -q next && notify-send -u low -t 1000 "󰎈 $(mpc current)" ;;
+    "$option_5") mpc -q repeat ;;
+    "$option_6") mpc -q random ;;
 esac

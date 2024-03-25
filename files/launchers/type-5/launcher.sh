@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 ## Author : Aditya Shakya (adi1090x)
 ## Github : @adi1090x
@@ -15,4 +15,4 @@ theme='style-4'
 ## Run
 rofi \
     -show drun \
-    -theme ${dir}/${theme}.rasi
+    -theme "${dir}/${theme}.rasi"

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 ## Author : Aditya Shakya (adi1090x)
 ## Github : @adi1090x
@@ -22,7 +22,7 @@ shutdown='󰐥 Shutdown'
 reboot='󰜉 Reboot'
 lock='󰌾 Lock'
 suspend='󰤄 Suspend'
-logout='󰗽 Logout'
+logout='󰍃 Logout'
 yes='󰗡 Yes'
 no='󰜺 No'
 
@@ -31,7 +31,7 @@ rofi_cmd() {
     rofi -dmenu \
         -p "$host" \
         -mesg "Uptime: $uptime" \
-        -theme ${dir}/${theme}.rasi
+        -theme "${dir}/${theme}.rasi"
 }
 
 # Confirmation CMD
@@ -44,69 +44,57 @@ confirm_cmd() {
         -dmenu \
         -p 'Confirmation' \
         -mesg 'Are you Sure?' \
-        -theme ${dir}/${theme}.rasi
+        -theme "${dir}/${theme}.rasi"
 }
 
 # Ask for confirmation
 confirm_exit() {
-    echo -e "$yes\n$no" | confirm_cmd
+    [ "$(printf "%s\n%s" "$yes" "$no" | confirm_cmd)" = "$no" ] && exit 0
 }
 
 # Pass variables to rofi dmenu
 run_rofi() {
-    echo -e "$lock\n$suspend\n$logout\n$reboot\n$shutdown" | rofi_cmd
-}
-
-# Execute Command
-run_cmd() {
-    selected="$(confirm_exit)"
-    if [[ "$selected" == "$yes" ]]; then
-        if [[ $1 == '--shutdown' ]]; then
-            systemctl poweroff
-        elif [[ $1 == '--reboot' ]]; then
-            systemctl reboot
-        elif [[ $1 == '--suspend' ]]; then
-            mpc -q pause
-            amixer set Master mute
-            systemctl suspend
-        elif [[ $1 == '--logout' ]]; then
-            if [[ "$DESKTOP_SESSION" == 'openbox' ]]; then
-                openbox --exit
-            elif [[ "$DESKTOP_SESSION" == 'bspwm' ]]; then
-                bspc quit
-            elif [[ "$DESKTOP_SESSION" == 'i3' ]]; then
-                i3-msg exit
-            elif [[ "$DESKTOP_SESSION" == 'gnome' ]]; then
-                gnome-session-quit --no-prompt --logout
-            elif [[ "$DESKTOP_SESSION" == 'plasma' ]]; then
-                qdbus org.kde.ksmserver /KSMServer logout 0 0 0
-            fi
-        fi
-    else
-        exit 0
-    fi
+    printf "%s\n%s\n%s\n%s\n%s" \
+        "$lock" \
+        "$suspend" \
+        "$logout" \
+        "$reboot" \
+        "$shutdown" |
+        rofi_cmd
 }
 
 # Actions
 chosen="$(run_rofi)"
 case ${chosen} in
-    $shutdown)
-        run_cmd --shutdown
+    "$shutdown")
+        confirm_exit
+        systemctl poweroff
         ;;
-    $reboot)
-        run_cmd --reboot
+    "$reboot")
+        confirm_exit
+        systemctl reboot
         ;;
-    $lock)
-        if [[ -x '/usr/bin/betterlockscreen' ]]; then
-            betterlockscreen -l
-        elif [[ -x '/usr/bin/i3lock' ]]; then
-            i3lock -c 000000
+    "$lock")
+        confirm_exit
+        i3lock -efc 000000
+        ;;
+    "$suspend")
+        confirm_exit
+        playerctl pause
+        systemctl suspend
+        ;;
+    "$logout")
+        confirm_exit
+        if [ "$DESKTOP_SESSION" = 'i3' ]; then
+            i3-msg exit
+        elif [ "$DESKTOP_SESSION" = 'gnome' ]; then
+            gnome-session-quit --no-prompt --logout
+        elif [ "$DESKTOP_SESSION" = 'plasma' ]; then
+            qdbus org.kde.ksmserver /KSMServer logout 0 0 0
+        elif [ "$DESKTOP_SESSION" = 'bspwm' ]; then
+            bspc quit
+        elif [ "$DESKTOP_SESSION" = 'openbox' ]; then
+            openbox --exit
         fi
-        ;;
-    $suspend)
-        run_cmd --suspend
-        ;;
-    $logout)
-        run_cmd --logout
         ;;
 esac
