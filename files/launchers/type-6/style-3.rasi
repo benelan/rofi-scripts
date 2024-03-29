@@ -21,7 +21,7 @@ configuration {
 
 /*****----- Global Properties -----*****/
 * {
-    font:                        "Iosevka Nerd Font 11";
+    font:                        "Iosevka Nerd Font 12";
     background:                  #09164C;
     background-alt:              #102886;
     foreground:                  #FFFFFF;

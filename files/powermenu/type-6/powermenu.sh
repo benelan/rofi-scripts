@@ -18,20 +18,20 @@ uptime="$(uptime -p | sed -e 's/up //g')"
 host="$(hostname)"
 
 # Options
-hibernate='󰒲'
-shutdown='󰐥'
-reboot='󰜉'
-lock='󰌾'
-suspend='󰤄'
-logout='󰍃'
-yes='󰗡'
-no='󰜺'
+lock=" "
+suspend=" "
+hibernate="󰒲 "
+logout=" "
+reboot=" "
+shutdown=" "
+yes=" "
+no=" "
 
 # Rofi CMD
 rofi_cmd() {
     rofi -dmenu \
         -p "  $USER@$host" \
-        -mesg "󰍃  Uptime: $uptime" \
+        -mesg "  Uptime: $uptime" \
         -theme "${dir}/${theme}.rasi"
 }
 
@@ -44,13 +44,13 @@ confirm_cmd() {
         -theme-str 'textbox {horizontal-align: 0.5;}' \
         -dmenu \
         -p 'Confirmation' \
-        -mesg 'Are you Sure?' \
+        -mesg "$1 Are you Sure?" \
         -theme "${dir}/${theme}.rasi"
 }
 
 # Ask for confirmation
 confirm_exit() {
-    [ "$(printf "%s\n%s" "$yes" "$no" | confirm_cmd)" = "$no" ] && exit 0
+    [ "$(printf "%s\n%s" "$yes" "$no" | confirm_cmd "$1")" = "$no" ] && exit 0
 }
 
 # Pass variables to rofi dmenu
@@ -65,41 +65,34 @@ run_rofi() {
         rofi_cmd
 }
 
+
+# Actions
 chosen="$(run_rofi)"
 case ${chosen} in
     "$shutdown")
-        confirm_exit
+        confirm_exit "$shutdown"
         systemctl poweroff
         ;;
     "$reboot")
-        confirm_exit
+        confirm_exit "$reboot"
         systemctl reboot
         ;;
     "$lock")
-        confirm_exit
-        i3lock -efc 000000
+        confirm_exit "$lock"
+        loginctl lock-session
         ;;
     "$hibernate")
-        confirm_exit
+        confirm_exit "$hibernate"
         systemctl hibernate
         ;;
     "$suspend")
-        confirm_exit
+        confirm_exit "$suspend"
         playerctl pause
         systemctl suspend
         ;;
     "$logout")
-        confirm_exit
-        if [ "$DESKTOP_SESSION" = 'i3' ]; then
-            i3-msg exit
-        elif [ "$DESKTOP_SESSION" = 'gnome' ]; then
-            gnome-session-quit --no-prompt --logout
-        elif [ "$DESKTOP_SESSION" = 'plasma' ]; then
-            qdbus org.kde.ksmserver /KSMServer logout 0 0 0
-        elif [ "$DESKTOP_SESSION" = 'bspwm' ]; then
-            bspc quit
-        elif [ "$DESKTOP_SESSION" = 'openbox' ]; then
-            openbox --exit
-        fi
+        confirm_exit "$logout"
+        pkill -9 -u "$USER"
+        # loginctl | grep "$USER" | awk '{print $1}' | xargs loginctl terminate-session
         ;;
 esac

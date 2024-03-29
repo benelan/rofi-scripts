@@ -26,7 +26,7 @@ configuration {
 
     prompt-font:                 "Iosevka Nerd Font Bold Italic 64";
     textbox-font:                "Iosevka Nerd Font 16";
-    element-text-font:           "feather 64";
+    element-text-font:           "Iosevka Nerd Font 64";
 
     background-window:           black/5%;
     background-normal:           white/5%;

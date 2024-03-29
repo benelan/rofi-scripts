@@ -11,7 +11,7 @@
 
 # Current Theme
 dir="$HOME/.config/rofi/powermenu/type-1"
-theme='style-5'
+theme='style-1'
 
 # CMDs
 uptime="$(uptime -p | sed -e 's/up //g')"
@@ -20,8 +20,8 @@ host=$(hostname)
 # Options
 shutdown='󰐥 Shutdown'
 reboot='󰜉 Reboot'
-lock='󰌾 Lock'
-suspend='󰤄 Suspend'
+lock='󰍁 Lock'
+suspend=' Suspend'
 logout='󰍃 Logout'
 yes='󰗡 Yes'
 no='󰜺 No'
@@ -43,13 +43,13 @@ confirm_cmd() {
         -theme-str 'textbox {horizontal-align: 0.5;}' \
         -dmenu \
         -p 'Confirmation' \
-        -mesg 'Are you Sure?' \
+        -mesg "$1 Are you Sure?" \
         -theme "${dir}/${theme}.rasi"
 }
 
 # Ask for confirmation
 confirm_exit() {
-    [ "$(printf "%s\n%s" "$yes" "$no" | confirm_cmd)" = "$no" ] && exit 0
+    [ "$(printf "%s\n%s" "$yes" "$no" | confirm_cmd "$1")" = "$no" ] && exit 0
 }
 
 # Pass variables to rofi dmenu
@@ -67,34 +67,25 @@ run_rofi() {
 chosen="$(run_rofi)"
 case ${chosen} in
     "$shutdown")
-        confirm_exit
+        confirm_exit "$shutdown"
         systemctl poweroff
         ;;
     "$reboot")
-        confirm_exit
+        confirm_exit "$reboot"
         systemctl reboot
         ;;
     "$lock")
-        confirm_exit
-        i3lock -efc 000000
+        confirm_exit "$lock"
+        loginctl lock-session
         ;;
     "$suspend")
-        confirm_exit
+        confirm_exit "$suspend"
         playerctl pause
         systemctl suspend
         ;;
     "$logout")
-        confirm_exit
-        if [ "$DESKTOP_SESSION" = 'i3' ]; then
-            i3-msg exit
-        elif [ "$DESKTOP_SESSION" = 'gnome' ]; then
-            gnome-session-quit --no-prompt --logout
-        elif [ "$DESKTOP_SESSION" = 'plasma' ]; then
-            qdbus org.kde.ksmserver /KSMServer logout 0 0 0
-        elif [ "$DESKTOP_SESSION" = 'bspwm' ]; then
-            bspc quit
-        elif [ "$DESKTOP_SESSION" = 'openbox' ]; then
-            openbox --exit
-        fi
+        confirm_exit "$logout"
+        pkill -9 -u "$USER"
+        # loginctl | grep "$USER" | awk '{print $1}' | xargs loginctl terminate-session
         ;;
 esac

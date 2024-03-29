@@ -27,29 +27,29 @@ fi
 # Options
 layout=$(cat "${theme}" | grep 'USE_ICON' | cut -d'=' -f2)
 if [ "$layout" = 'NO' ]; then
-    option_1="󰍁  Lock"
-    option_2="󰗽  Logout"
-    option_3="  Suspend"
-    option_4="󰒲  Hibernate"
-    option_5="󰜉  Reboot"
-    option_6="󰐥  Shutdown"
-    yes="󰗡  Yes"
-    no="󰜺  No"
+    option_1="  Lock"
+    option_2="  Suspend"
+    option_3="󰒲  Hibernate"
+    option_4="  Logout"
+    option_5="  Reboot"
+    option_6="  Shutdown"
+    yes="  Yes"
+    no="  No"
 else
-    option_1="󰍁 "
-    option_2="󰗽 "
-    option_3=" "
-    option_4="󰒲 "
-    option_5="󰜉 "
-    option_6="󰐥 "
-    yes="󰗡 "
-    no="󰜺 "
+    option_1=" "
+    option_2=" "
+    option_3="󰒲 " #     
+    option_4=" "
+    option_5=" "
+    option_6=" "
+    yes=" "
+    no=" "
 fi
 
 # Rofi CMD
 rofi_cmd() {
     rofi -theme-str "listview {columns: $list_col; lines: $list_row;}" \
-        -theme-str 'textbox-prompt-colon {str: "⏻ ";}' \
+        -theme-str 'textbox-prompt-colon {str: " ";}' \
         -dmenu \
         -p "$prompt" \
         -mesg "$mesg" \
@@ -78,29 +78,41 @@ confirm_cmd() {
         -theme-str 'textbox {horizontal-align: 0.5;}' \
         -dmenu \
         -p 'Confirmation' \
-        -mesg 'Are you Sure?' \
+        -mesg "$1 Are you Sure?" \
         -theme "${theme}"
 }
 
-# Ask for confirmation
+# Confirm or exit
 confirm_exit() {
-    printf "%s\n%s" "$yes" "$no" | confirm_cmd
-}
-
-# Confirm and execute
-confirm_run() {
-    selected="$(confirm_exit)"
-    [ "$selected" = "$no" ] && exit
-    $1 && [ -e "$2" ] && $2
+    [ "$(printf "%s\n%s" "$yes" "$no" | confirm_cmd "$1")" = "$no" ] && exit 0
 }
 
 # Actions
 chosen="$(run_rofi)"
 case ${chosen} in
-    "$option_1") loginctl lock-session ;;
-    "$option_2") confirm_run 'kill -9 -1' ;;
-    "$option_3") confirm_run 'playerctl pause' 'systemctl suspend' ;;
-    "$option_4") confirm_run 'systemctl hibernate' ;;
-    "$option_5") confirm_run 'systemctl reboot' ;;
-    "$option_6") confirm_run 'systemctl poweroff' ;;
+    "$option_1")
+        confirm_exit "$option_1"
+        loginctl lock-session
+        ;;
+    "$option_2")
+        confirm_exit "$option_2"
+        playerctl pause 2>/dev/null || true && systemctl suspend
+        ;;
+    "$option_3")
+        confirm_exit "$option_3"
+        systemctl hibernate
+        ;;
+    "$option_4")
+        confirm_exit "$option_4"
+        pkill -9 -u "$USER"
+        # loginctl | grep "$USER" | awk '{print $1}' | xargs loginctl terminate-session
+        ;;
+    "$option_5")
+        confirm_exit "$option_5"
+        systemctl reboot
+        ;;
+    "$option_6")
+        confirm_exit "$option_6"
+        systemctl poweroff
+        ;;
 esac

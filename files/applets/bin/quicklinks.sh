@@ -11,9 +11,11 @@
 # shellcheck disable=2154
 theme="$type/$style"
 
+quickopen_browser=$BROWSER
+
 # Theme Elements
 prompt='Quick Links'
-mesg="Using '$BROWSER' as web browser"
+mesg="Using '$quickopen_browser' as web browser"
 
 type_number="$(basename "$type")"
 if [ "$type_number" = 'type-1' ] || [ "$type_number" = 'type-3' ] || [ "$type_number" = 'type-5' ]; then
@@ -84,13 +86,13 @@ run_rofi() {
 # Actions
 chosen="$(run_rofi)"
 case ${chosen} in
-    "$option_1") xdg-open 'https://proton.me' & ;;
-    "$option_2") xdg-open 'https://www.github.com/' & ;;
-    "$option_3") xdg-open 'https://www.youtube.com/' & ;;
-    "$option_4") xdg-open 'https://music.apple.com/' & ;;
-    "$option_5") xdg-open 'https://www.netflix.com/' & ;;
-    "$option_6") xdg-open 'https://www.hulu.com/' & ;;
-    "$option_7") xdg-open 'https://www.reddit.com/' & ;;
-    "$option_8") xdg-open 'https://www.google.com/' & ;;
-    "$option_9") xdg-open 'https://mail.google.com/' & ;;
+    "$option_1") $quickopen_browser 'https://proton.me' & ;;
+    "$option_2") $quickopen_browser 'https://www.github.com/' & ;;
+    "$option_3") $quickopen_browser 'https://www.youtube.com/' & ;;
+    "$option_4") $quickopen_browser 'https://music.apple.com/' & ;;
+    "$option_5") $quickopen_browser 'https://www.netflix.com/' & ;;
+    "$option_6") $quickopen_browser 'https://www.hulu.com/' & ;;
+    "$option_7") $quickopen_browser 'https://www.reddit.com/' & ;;
+    "$option_8") $quickopen_browser 'https://www.google.com/' & ;;
+    "$option_9") $quickopen_browser 'https://mail.google.com/' & ;;
 esac
