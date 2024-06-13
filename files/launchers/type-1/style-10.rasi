@@ -128,7 +128,7 @@ textbox-prompt-colon {
     enabled:                     true;
     padding:                     10px 0px 10px 0px;
     expand:                      false;
-    str:                         "::";
+    str:                         ">";
     background-color:            inherit;
     text-color:                  inherit;
 }
@@ -140,7 +140,7 @@ entry {
     background-color:            inherit;
     text-color:                  inherit;
     cursor:                      text;
-    placeholder:                 "search...";
+    placeholder:                 "...";
     placeholder-color:           inherit;
 }
 num-filtered-rows {
