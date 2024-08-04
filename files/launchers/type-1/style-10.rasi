@@ -58,7 +58,8 @@ window {
     fullscreen:                  false;
     width:                       100%;
     x-offset:                    0px;
-    y-offset:                    0px;
+    /* Add offset so it doesn't overlap with the statusbar */
+    y-offset:                    30px;
 
     children:                    [ horibox ];
 
