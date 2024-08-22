@@ -29,7 +29,7 @@ term_cmd="$TERMINAL"
 file_cmd="vifm"
 text_cmd="$TERMINAL -e $([ "$EDITOR" = "nvim" ] && echo "nvim" || echo "vim")"
 web_cmd="$BROWSER"
-music_cmd='lollypop'
+music_cmd='sayonara'
 setting_cmd="gnome-control-center"
 
 # Options
