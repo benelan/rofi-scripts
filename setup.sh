@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2086,SC2034
 
 ## Author : Aditya Shakya (adi1090x)
 ## Github : @adi1090x
@@ -18,28 +19,17 @@ ROFI_DIR="$HOME/.config/rofi"
 # Install Fonts
 install_fonts() {
     echo -e ${BBlue}"\n[*] Installing fonts..." ${Color_Off}
-    if [[ -d "$FONT_DIR" ]]; then
-        cp -rf "$DIR"/fonts/* "$FONT_DIR"
-    else
-        mkdir -p "$FONT_DIR"
-        cp -rf "$DIR"/fonts/* "$FONT_DIR"
-    fi
+    mkdir -p "$FONT_DIR"
+    cp -rf "$DIR"/fonts/* "$FONT_DIR"
     echo -e ${BYellow}"[*] Updating font cache...\n" ${Color_Off}
     fc-cache
 }
 
 # Install Themes
 install_themes() {
-    if [[ -d "$ROFI_DIR" ]]; then
-        echo -e ${BPurple}"[*] Creating a backup of your rofi configs..." ${Color_Off}
-        mv "$ROFI_DIR" "${ROFI_DIR}.${USER}"
-    fi
     echo -e ${BBlue}"[*] Installing rofi configs..." ${Color_Off}
-    {
-        mkdir -p "$ROFI_DIR"
-        cp -rf "$DIR"/files/* "$ROFI_DIR"
-    }
-
+    mkdir -p "$ROFI_DIR"
+    cp -rf "$DIR"/files/* "$ROFI_DIR"
     if [[ -f "$ROFI_DIR/config.rasi" ]]; then
         echo -e ${BGreen}"[*] Successfully Installed.\n" ${Color_Off}
         exit 0
